@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tomato Leaf Disease Classifier</title>
+    <style>
+      .input {
+        display: flex;
+        flex-direction: column;
+        width: 40%;
+        font-size: 20px;
+        gap: 10px;
+      }
+      .output {
+        margin-top: 20px;
+      }
+      .output img {
+        max-width: 100%;
+      }
+      .prediction {
+        font-size: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="input">
+      <label for="file-input">Selecione a imagem da folha de tomate</label>
+      <input type="file" id="file-input" accept=".jpg,.png,.jpeg" />
+    </div>
+    <button type="button" onclick="uploadImage()">Upload</button>
+    
+    <div class="output" id="output">
+      <img id="selected-image" src="" alt="Selected Image" />
+      <div class="prediction" id="prediction"></div>
+    </div>
+
+    <script>
+      function uploadImage() {
+        const fileInput = document.getElementById("file-input");
+        const outputDiv = document.getElementById("output");
+        const imgElement = document.getElementById("selected-image");
+        const predictionElement = document.getElementById("prediction");
+
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          const reader = new FileReader();
+          
+          reader.onload = function (event) {
+            // Display the selected image
+            imgElement.src = event.target.result;
+            
+            const base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
+            const data = { foto: base64String };
+
+            fetch("/cnn", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.status === 200) {
+                  predictionElement.textContent = "Prediction: " + data.prediction;
+                } else {
+                  predictionElement.textContent = "Error: " + data.message;
+                }
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+                predictionElement.textContent = "Error: " + error.message;
+              });
+          };
+          
+          reader.readAsDataURL(file);
+          outputDiv.style.display = "block";
+        } else {
+          alert("Please select a file.");
+        }
+      }
+    </script>
+  </body>
+</html>
