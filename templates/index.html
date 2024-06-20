@@ -5,56 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tomato Leaf Disease Classifier</title>
     <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+      }
+
+      .container {
+        text-align: center;
+        width: 80%;
+        max-width: 600px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
       .input {
         display: flex;
         flex-direction: column;
-        width: 40%;
-        font-size: 20px;
-        gap: 10px;
+        align-items: center;
+        margin-bottom: 20px;
       }
+
       .output {
         margin-top: 20px;
+        display: none; /* Inicialmente oculto */
       }
+
       .output img {
         max-width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
       }
+
       .prediction {
         font-size: 20px;
         font-weight: bold;
+        margin-top: 10px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3;
       }
     </style>
   </head>
   <body>
-    <div class="input">
-      <label for="file-input">Selecione a imagem da folha de tomate</label>
-      <input type="file" id="file-input" accept=".jpg,.png,.jpeg" />
-    </div>
-    <button type="button" onclick="uploadImage()">Upload</button>
-    
-    <div class="output" id="output">
-      <img id="selected-image" src="" alt="Selected Image" />
-      <div class="prediction" id="prediction"></div>
+    <div class="container">
+      <h1>Classificador de doença folha de tomate</h1>
+      <div class="input">
+        <label for="file-input">Selecione a imagem da folha de tomate</label>
+        <input type="file" id="file-input" accept=".jpg,.png,.jpeg" />
+      </div>
+      <button type="button" onclick="uploadImage()">Upload</button>
+
+      <div class="output" id="output">
+        <img id="selected-image" src="" alt="Selected Image" />
+        <div class="prediction" id="prediction"></div>
+      </div>
     </div>
 
     <script>
       function uploadImage() {
         const fileInput = document.getElementById("file-input");
-        const outputDiv = document.getElementById("output");
         const imgElement = document.getElementById("selected-image");
+        const outputDiv = document.getElementById("output");
         const predictionElement = document.getElementById("prediction");
 
         if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
           const reader = new FileReader();
-          
+
           reader.onload = function (event) {
-            // Display the selected image
             imgElement.src = event.target.result;
-            
-            const base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
+            outputDiv.style.display = "block";
+
+            const base64String = reader.result
+              .replace("data:", "")
+              .replace(/^.+,/, "");
             const data = { foto: base64String };
 
-            fetch("/cnn", {
+            predictionElement.textContent = "";
+            fetch("/api/cnn", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -64,7 +111,8 @@
               .then((response) => response.json())
               .then((data) => {
                 if (data.status === 200) {
-                  predictionElement.textContent = "Prediction: " + data.prediction;
+                  predictionElement.textContent =
+                    "Prediction: " + data.prediction;
                 } else {
                   predictionElement.textContent = "Error: " + data.message;
                 }
@@ -74,9 +122,8 @@
                 predictionElement.textContent = "Error: " + error.message;
               });
           };
-          
+
           reader.readAsDataURL(file);
-          outputDiv.style.display = "block";
         } else {
           alert("Please select a file.");
         }
