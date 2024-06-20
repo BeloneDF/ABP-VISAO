@@ -62,7 +62,7 @@ Para ver o front-end do projeto e testá-lo basta abrir o endpoint local:
 
 ## Documentação da API
 
-#### Retorna todos os itens
+#### Renderiza o front-end em Jinja2
 
 ```http
   GET /
@@ -72,7 +72,7 @@ Para ver o front-end do projeto e testá-lo basta abrir o endpoint local:
 | :---------- | :--------- | :---------------------------------- |
 |  |  | Retorna o front-end da aplicação |
 
-#### Retorna um item
+#### Enviar imagem em base64 para a classficação
 
 ```http
   POST /api/cnn
@@ -81,6 +81,13 @@ Para ver o front-end do projeto e testá-lo basta abrir o endpoint local:
 | Body   | Tipo       | Descrição                                   |
 | :---------- | :--------- | :------------------------------------------ |
 | `foto`      | `string base64` | **Obrigatório**. A sua foto em base64 para a classficação do modelo |
+
+Exemplo:
+```bash
+  {
+    "foto": "string base64"
+  }
+```
 
 
 
