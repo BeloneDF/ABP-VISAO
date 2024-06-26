@@ -1,7 +1,7 @@
 
 # Classificação de doenças no tomate por meio da detecção das folhas.
 
-Este projeto utiliza uma Rede Neural Convolucional (CNN) para a detecção de doenças em folhas de tomate. O modelo é treinado com um conjunto de dados de imagens de folhas de tomate, cada uma rotulada com a respectiva doença ou saudável e obteve uma acurácia de 90%.
+Este projeto utiliza uma Rede Neural Convolucional (CNN) para a detecção de doenças em folhas de tomate. O modelo é treinado com um conjunto de dados de imagens de folhas de tomate, cada uma rotulada com a respectiva doença ou saudável e obteve uma acurácia de 90%. Algumas imagens já tratadas estão na pasta assets.
 
 
 ## Rodando localmente
